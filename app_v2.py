@@ -43,24 +43,19 @@ conn.close()
 app = dash.Dash(__name__)
 
 app.layout = html.Div([
-
     html.H1("Análise de E-sports"),
-    
     html.Div([
         html.H2("Gráfico do Jogo Menos Jogado"),
         dcc.Graph(id='graph-jogo-menos-jogado'),
     ]),
-    
     html.Div([
         html.H2("Total Pago aos Jogadores"),
         html.Div(id='total-pago-jogadores')
     ]),
-    
     html.Div([
         html.H2("Países Participantes da América do Sul"),
         html.Ul(id='lista-paises-am-sul')
     ]),
-
     dcc.Interval(
         id='dummy-interval',
         interval=86400000,  # 24 horas em milissegundos
@@ -68,35 +63,33 @@ app.layout = html.Div([
     ),
 ])
 
+
 # Callback para atualizar o gráfico do jogo menos jogado
-@app.callback(
-    dash.dependencies.Output('graph-jogo-menos-jogado', 'figure'),
-    [dash.dependencies.Input('dummy-interval', 'n_intervals')]
-)
+@app.callback(dash.dependencies.Output('graph-jogo-menos-jogado', 'figure'),
+              [dash.dependencies.Input('dummy-interval', 'n_intervals')])
 def update_graph_jogo_menos_jogado(n):
-    fig = px.bar(df_1, x='jogo', y='total_aparicoes', title='Jogo Menos Jogado em E-sports')
+    fig = px.bar(df_1,
+                 x='jogo',
+                 y='total_aparicoes',
+                 title='Jogo Menos Jogado em E-sports')
     return fig
 
+
 # Callback para atualizar o total pago aos jogadores
-@app.callback(
-    dash.dependencies.Output('total-pago-jogadores', 'children'),
-    [dash.dependencies.Input('dummy-interval', 'n_intervals')]
-)
+@app.callback(dash.dependencies.Output('total-pago-jogadores', 'children'),
+              [dash.dependencies.Input('dummy-interval', 'n_intervals')])
 def update_total_pago_jogadores(n):
     total_pago = df_2.iloc[0]['PREMIACAO_TOTAL_JOGADORES']
     return f"Total Pago aos Jogadores: R$ {total_pago:,}"
 
+
 # Callback para atualizar a lista de países participantes da América do Sul
-@app.callback(
-    dash.dependencies.Output('lista-paises-am-sul', 'children'),
-    [dash.dependencies.Input('dummy-interval', 'n_intervals')]
-)
+@app.callback(dash.dependencies.Output('lista-paises-am-sul', 'children'),
+              [dash.dependencies.Input('dummy-interval', 'n_intervals')])
 def update_lista_paises_am_sul(n):
-    lista_paises = html.Ul([
-        html.Li(pais) for pais in df_3['Nome']
-    ])
+    lista_paises = html.Ul([html.Li(pais) for pais in df_3['Nome']])
     return lista_paises
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)
-
