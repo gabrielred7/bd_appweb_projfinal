@@ -33,10 +33,22 @@ AND fk_Continente_Continente_Nome='South America'
 LIMIT 5;
 """
 
+consulta_4 = """
+SELECT c.Continente_Nome AS Continente,
+    SUM(j.Premio_Acumulado) AS Premiacao_Total_Por_Continente
+FROM jogador j
+JOIN pais p ON j.fk_Pais_Sigla_Principal = p.Sigla_Principal
+JOIN pertence pe ON p.Sigla_Principal = pe.fk_Pais_Sigla_Principal
+JOIN Continente c ON pe.fk_Continente_Continente_nome = c.Continente_Nome
+GROUP BY c.Continente_Nome
+ORDER BY Premiacao_Total_Por_Continente DESC;
+"""
+
 # Executar a consulta SQL e obter os resultados em um DataFrame
 df_1 = pd.read_sql_query(consulta_1, conn)
 df_2 = pd.read_sql_query(consulta_2, conn)
 df_3 = pd.read_sql_query(consulta_3, conn)
+df_4 = pd.read_sql_query(consulta_4, conn)
 
 conn.close()
 
@@ -55,6 +67,10 @@ app.layout = html.Div([
     html.Div([
         html.H2("Países Participantes da América do Sul"),
         html.Ul(id='lista-paises-am-sul')
+    ]),
+    html.Div([
+        html.H2("Gráfico do Prêmio Total de cada Continente"),
+        dcc.Graph(id='graph-total-premio-continente'),
     ]),
     dcc.Interval(
         id='dummy-interval',
@@ -89,6 +105,19 @@ def update_total_pago_jogadores(n):
 def update_lista_paises_am_sul(n):
     lista_paises = html.Ul([html.Li(pais) for pais in df_3['Nome']])
     return lista_paises
+
+
+# Callback para atualizaro total de prêmiodos jogadores arrecadado por cada
+# continente
+@app.callback(
+    dash.dependencies.Output('graph-total-premio-continente', 'figure'),
+    [dash.dependencies.Input('dummy-interval', 'n_intervals')])
+def update_graph_total_premio_continente(n):
+    fig = px.bar(df_4,
+                 x='Continente',
+                 y='Premiacao_Total_Por_Continente',
+                 title='Prêmio total arrecadado por continente')
+    return fig
 
 
 if __name__ == '__main__':
