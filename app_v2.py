@@ -57,8 +57,8 @@ app = dash.Dash(__name__)
 app.layout = html.Div([
     html.H1("Análise de E-sports"),
     html.Div([
-        html.H2("Gráfico do Jogo Menos Jogado"),
-        dcc.Graph(id='graph-jogo-menos-jogado'),
+        html.H2("Jogo Menos Jogado"),
+        html.Div(id='jogo-menos-jogado'),
     ]),
     html.Div([
         html.H2("Total Pago aos Jogadores"),
@@ -81,14 +81,11 @@ app.layout = html.Div([
 
 
 # Callback para atualizar o gráfico do jogo menos jogado
-@app.callback(dash.dependencies.Output('graph-jogo-menos-jogado', 'figure'),
+@app.callback(dash.dependencies.Output('jogo-menos-jogado', 'children'),
               [dash.dependencies.Input('dummy-interval', 'n_intervals')])
 def update_graph_jogo_menos_jogado(n):
-    fig = px.bar(df_1,
-                 x='jogo',
-                 y='total_aparicoes',
-                 title='Jogo Menos Jogado em E-sports')
-    return fig
+    jogo_menos_jogado = df_1.loc[df_1['total_aparicoes'].idxmin(), 'jogo']
+    return jogo_menos_jogado
 
 
 # Callback para atualizar o total pago aos jogadores
