@@ -120,7 +120,7 @@ def update_lista_paises_am_sul(n):
     return lista_paises
 
 
-# Callback para atualizaro total de prêmiodos jogadores arrecadado por cada
+# Callback para atualizar o total de prêmio dos jogadores arrecadado por cada
 # continente
 @app.callback(
     dash.dependencies.Output('graph-total-premio-continente', 'figure'),
