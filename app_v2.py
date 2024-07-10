@@ -44,11 +44,23 @@ GROUP BY c.Continente_Nome
 ORDER BY Premiacao_Total_Por_Continente DESC;
 """
 
+consulta_5 = """
+SELECT c.Continente_Nome, COUNT(DISTINCT jo.JogadorID) AS Total_Jogadores
+FROM jogador jo
+INNER JOIN pais p ON LOWER(jo.fk_Pais_Sigla_Principal) = LOWER(p.Sigla_Principal)
+INNER JOIN pertence pe ON p.Sigla_Principal = pe.fk_Pais_Sigla_Principal
+INNER JOIN continente c ON pe.fk_Continente_Continente_Nome = c.Continente_Nome
+GROUP BY c.Continente_Nome
+ORDER BY Total_Jogadores
+DESC;
+"""
+
 # Executar a consulta SQL e obter os resultados em um DataFrame
 df_1 = pd.read_sql_query(consulta_1, conn)
 df_2 = pd.read_sql_query(consulta_2, conn)
 df_3 = pd.read_sql_query(consulta_3, conn)
 df_4 = pd.read_sql_query(consulta_4, conn)
+df_5 = pd.read_sql_query(consulta_5, conn)
 
 conn.close()
 
@@ -71,6 +83,10 @@ app.layout = html.Div([
     html.Div([
         html.H2("Gráfico do Prêmio Total de cada Continente"),
         dcc.Graph(id='graph-total-premio-continente'),
+    ]),
+    html.Div([
+        html.H2("Gráfico da Quantidade de Jogadores por Continente"),
+        dcc.Graph(id='graph-total-jogadores-continente'),
     ]),
     dcc.Interval(
         id='dummy-interval',
@@ -114,6 +130,18 @@ def update_graph_total_premio_continente(n):
                  x='Continente',
                  y='Premiacao_Total_Por_Continente',
                  title='Prêmio total arrecadado por continente')
+    return fig
+
+
+# Callback para atualizar o total de jogadores por continente
+@app.callback(
+    dash.dependencies.Output('graph-total-jogadores-continente', 'figure'),
+    [dash.dependencies.Input('dummy-interval', 'n_intervals')])
+def update_graph_total_jogadores_continente(n):
+    fig = px.bar(df_5,
+                 x='Continente_Nome',
+                 y='Total_Jogadores',
+                 title='Quantidade de jogadores por continente')
     return fig
 
 
