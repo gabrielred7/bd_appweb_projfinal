@@ -34,6 +34,7 @@ LIMIT 5;
 """
 
 consulta_4 = """
+<<<<<<< Updated upstream
 SELECT c.Continente_Nome AS Continente,
     SUM(j.Premio_Acumulado) AS Premiacao_Total_Por_Continente
 FROM jogador j
@@ -53,6 +54,13 @@ INNER JOIN continente c ON pe.fk_Continente_Continente_Nome = c.Continente_Nome
 GROUP BY c.Continente_Nome
 ORDER BY Total_Jogadores
 DESC;
+=======
+SELECT c.Continente_Nome, COUNT(DISTINCT jo.JogadorID) AS Total_Jogadores FROM jogador jo
+INNER JOIN pais p ON jo.fk_Pais_Sigla_Principal = p.Sigla_Principal
+INNER JOIN pertence pe ON p.Sigla_Principal = pe.fk_Pais_Sigla_Principal
+INNER JOIN continente c ON pe.fk_Continente_Continente_Nome = c.Continente_Nome
+GROUP BY c.Continente_Nome ORDER BY Total_Jogadores DESC;
+>>>>>>> Stashed changes
 """
 
 # Executar a consulta SQL e obter os resultados em um DataFrame
@@ -60,7 +68,10 @@ df_1 = pd.read_sql_query(consulta_1, conn)
 df_2 = pd.read_sql_query(consulta_2, conn)
 df_3 = pd.read_sql_query(consulta_3, conn)
 df_4 = pd.read_sql_query(consulta_4, conn)
+<<<<<<< Updated upstream
 df_5 = pd.read_sql_query(consulta_5, conn)
+=======
+>>>>>>> Stashed changes
 
 conn.close()
 
@@ -80,6 +91,7 @@ app.layout = html.Div([
         html.H2("Países Participantes da América do Sul"),
         html.Ul(id='lista-paises-am-sul')
     ]),
+<<<<<<< Updated upstream
     html.Div([
         html.H2("Gráfico do Prêmio Total de cada Continente"),
         dcc.Graph(id='graph-total-premio-continente'),
@@ -88,6 +100,14 @@ app.layout = html.Div([
         html.H2("Gráfico da Quantidade de Jogadores por Continente"),
         dcc.Graph(id='graph-total-jogadores-continente'),
     ]),
+=======
+
+    html.Div([
+        html.H2("Quantidade de Jogadores por Continente"),
+        dcc.Graph(id='graph-jogadores-por-continente'),
+    ]),
+
+>>>>>>> Stashed changes
     dcc.Interval(
         id='dummy-interval',
         interval=86400000,  # 24 horas em milissegundos
@@ -119,6 +139,7 @@ def update_lista_paises_am_sul(n):
     lista_paises = html.Ul([html.Li(pais) for pais in df_3['Nome']])
     return lista_paises
 
+<<<<<<< Updated upstream
 
 # Callback para atualizar o total de prêmio dos jogadores arrecadado por cada
 # continente
@@ -147,3 +168,16 @@ def update_graph_total_jogadores_continente(n):
 
 if __name__ == '__main__':
     app.run_server(debug=True)
+=======
+# Callback para atualizar o gráfico de jogadores por continente
+@app.callback(
+    dash.dependencies.Output('graph-jogadores-por-continente', 'figure'),
+    [dash.dependencies.Input('dummy-interval', 'n_intervals')]
+)
+def update_graph_jogadores_por_continente(n):
+    fig = px.bar(df_4, x='Continente_Nome', y='Total_Jogadores', title='Quantidade de Jogadores por Continente')
+    return fig
+
+if __name__ == '__main__':
+    app.run_server(debug=True)
+>>>>>>> Stashed changes
