@@ -37,9 +37,9 @@ consulta_4 = """
 SELECT c.Continente_Nome AS Continente,
     SUM(j.Premio_Acumulado) AS Premiacao_Total_Por_Continente
 FROM jogador j
-JOIN pais p ON j.fk_Pais_Sigla_Principal = p.Sigla_Principal
+JOIN pais p ON LOWER(j.fk_Pais_Sigla_Principal) = LOWER(p.Sigla_Principal)
 JOIN pertence pe ON p.Sigla_Principal = pe.fk_Pais_Sigla_Principal
-JOIN Continente c ON pe.fk_Continente_Continente_nome = c.Continente_Nome
+JOIN Continente c ON pe.fk_Continente_Continente_Nome = c.Continente_Nome
 GROUP BY c.Continente_Nome
 ORDER BY Premiacao_Total_Por_Continente DESC;
 """
